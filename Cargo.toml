@@ -1,0 +1,7 @@
+[package]
+name = "epub_builder"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+epub-builder = "0.7"
