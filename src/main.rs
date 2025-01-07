@@ -1,7 +1,7 @@
+use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
 use std::fs::{self, File};
 use std::io::{self, Write};
 use std::path::Path;
-use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
 
 fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     let mut output = Vec::<u8>::new();
@@ -10,19 +10,25 @@ fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     let zip_library = ZipLibrary::new()?;
     // 然后将其传递给 EpubBuilder
     let mut builder = EpubBuilder::new(zip_library).unwrap();
-    
+
     builder.metadata("author", "unknown")?;
     builder.metadata("title", "afterglow")?;
     builder.epub_version(EpubVersion::V30);
 
     // Read images from the folder and add them to the EPUB
     let paths = fs::read_dir(image_folder)?;
+
+    let mut cover_index_flag: i32 = 1;
+
     for (i, path) in paths.enumerate() {
         let path = path?.path();
         if path.is_file() {
             let image_data = fs::read(&path)?;
             let image_name = path.file_name().unwrap().to_str().unwrap();
-
+            if cover_index_flag == 1 {
+                builder.add_cover_image(image_name, &*image_data, "image/png")?;
+                cover_index_flag += 1;
+            }
             // Add image as a resource
             builder.add_resource(image_name, &*image_data, "image/png")?;
 
