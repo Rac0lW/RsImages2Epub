@@ -1,18 +1,20 @@
+use core::panic;
+use directories::UserDirs;
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
+use std::env;
 use std::fs::{self, File};
 use std::io::{self, Write};
-use std::path::Path;
+// use std::path::Path;
 
 fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     let mut output = Vec::<u8>::new();
 
-    // 先创建 ZipLibrary 实例
     let zip_library = ZipLibrary::new()?;
-    // 然后将其传递给 EpubBuilder
+
     let mut builder = EpubBuilder::new(zip_library).unwrap();
 
     builder.metadata("author", "unknown")?;
-    builder.metadata("title", "afterglow")?;
+    builder.metadata("title", "unknown")?;
     builder.epub_version(EpubVersion::V30);
 
     // Read images from the folder and add them to the EPUB
@@ -59,16 +61,41 @@ fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
 
 fn main() -> io::Result<()> {
     // Path to the folder containing images
-    let image_folder = r"C:\\Users\\racol\\Desktop\\New folder\\image\\flowers";
+    let args: Vec<String> = env::args().collect();
+
+    let input: String;
+
+    if args.len() > 1 {
+        input = args[1].clone();
+    } else {
+        panic!("New a folder path of your images.");
+    }
+
+    let input = input.trim();
+
+    let image_folder = input;
 
     // Generate EPUB
     let output = run(image_folder).expect("Unable to create an epub document");
 
-    // Define the path to the desktop
-    let desktop_path = Path::new(r#"C:\Users\racol\Desktop\1.epub"#);
+    // Locate the desktop's path
+    let desktop_path;
 
+    if let Some(user_dir) = UserDirs::new() {
+        if let Some(path) = user_dir.desktop_dir() {
+            let name = String::from("\\new.epub");
+
+            desktop_path = String::from(path.to_str().unwrap()) + name.as_str();
+        } else {
+            panic!("Could not find the desktop directory.");
+        }
+    } else {
+        panic!("Could not determine user directories.");
+    }
+
+    println!("{:?}", desktop_path);
     // Create and write to the file
-    let mut file = File::create(desktop_path).expect("Error01");
+    let mut file = File::create(desktop_path.as_str()).expect("Error01");
     file.write_all(&output)?;
 
     Ok(())
