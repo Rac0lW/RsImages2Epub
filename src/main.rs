@@ -59,6 +59,20 @@ fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     Ok(output)
 }
 
+fn get_desktop_path() -> String {
+    if let Some(user_dir) = UserDirs::new() {
+        if let Some(path) = user_dir.desktop_dir() {
+            let name = String::from(r"\new.epub");
+
+            String::from(path.to_str().unwrap()) + name.as_str()
+        } else {
+            panic!("Could not find the desktop directory.");
+        }
+    } else {
+        panic!("Could not determine user directories.");
+    }
+}
+
 fn main() -> io::Result<()> {
     // Path to the folder containing images
     let args: Vec<String> = env::args().collect();
@@ -79,24 +93,23 @@ fn main() -> io::Result<()> {
     let output = run(image_folder).expect("Unable to create an epub document");
 
     // Locate the desktop's path
-    let desktop_path;
+    let desktop_path = get_desktop_path();
 
-    if let Some(user_dir) = UserDirs::new() {
-        if let Some(path) = user_dir.desktop_dir() {
-            let name = String::from("\\new.epub");
-
-            desktop_path = String::from(path.to_str().unwrap()) + name.as_str();
-        } else {
-            panic!("Could not find the desktop directory.");
-        }
-    } else {
-        panic!("Could not determine user directories.");
-    }
-
-    println!("{:?}", desktop_path);
     // Create and write to the file
     let mut file = File::create(desktop_path.as_str()).expect("Error01");
     file.write_all(&output)?;
 
     Ok(())
+}
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_desktop_path_right() {
+        let expect_result = r"C:\Users\racol\Desktop\new.epub";
+        assert_eq!(expect_result, get_desktop_path())
+    }
 }
