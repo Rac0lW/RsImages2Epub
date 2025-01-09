@@ -1,10 +1,11 @@
 use core::panic;
-use directories::UserDirs;
+
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
 use std::env;
 use std::fs::{self, File};
 use std::io::{self, Write};
 // use std::path::Path;
+use RsImage2Epub::get_desktop_path;
 
 fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     let mut output = Vec::<u8>::new();
@@ -59,20 +60,6 @@ fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     Ok(output)
 }
 
-fn get_desktop_path() -> String {
-    if let Some(user_dir) = UserDirs::new() {
-        if let Some(path) = user_dir.desktop_dir() {
-            let name = String::from(r"\new.epub");
-
-            String::from(path.to_str().unwrap()) + name.as_str()
-        } else {
-            panic!("Could not find the desktop directory.");
-        }
-    } else {
-        panic!("Could not determine user directories.");
-    }
-}
-
 fn main() -> io::Result<()> {
     // Path to the folder containing images
     let args: Vec<String> = env::args().collect();
@@ -100,16 +87,4 @@ fn main() -> io::Result<()> {
     file.write_all(&output)?;
 
     Ok(())
-}
-
-#[cfg(test)]
-
-mod tests {
-    use super::*;
-
-    #[test]
-    fn is_desktop_path_right() {
-        let expect_result = r"C:\Users\racol\Desktop\new.epub";
-        assert_eq!(expect_result, get_desktop_path())
-    }
 }
