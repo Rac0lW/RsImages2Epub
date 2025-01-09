@@ -2,6 +2,8 @@
 
 ## Usage
 
+0. Download the release file.
+
 1. Locate the where the release file exists. 
 
 2. Open Terminal.exe(Powershell.exe/ cmd.exe).
