@@ -1,5 +1,5 @@
 [package]
-name = "RsImage2Epub"
+name = "rs_image_2_epub"
 version = "0.1.0"
 edition = "2021"
 
