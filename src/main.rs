@@ -5,8 +5,8 @@ use std::env;
 use std::fs::{self, File};
 use std::io::{self, Write};
 // use std::path::Path;
+use ansi_term::Colour;
 use rs_image_2_epub::get_desktop_path;
-
 fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     let mut output = Vec::<u8>::new();
 
@@ -87,7 +87,8 @@ fn main() -> io::Result<()> {
     file.write_all(&output)?;
 
     println!(
-        "Work is down, see the file's location {}",
+        "[{}] Work is down, see the file's location {}",
+        Colour::Green.paint("Success"),
         desktop_path.as_str()
     );
 
