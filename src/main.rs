@@ -69,7 +69,7 @@ fn main() -> io::Result<()> {
     if args.len() > 1 {
         input = args[1].clone();
     } else {
-        panic!("New a folder path of your images.");
+        panic!("Need a folder path of your images.");
     }
 
     let input = input.trim();
@@ -85,6 +85,11 @@ fn main() -> io::Result<()> {
     // Create and write to the file
     let mut file = File::create(desktop_path.as_str()).expect("Error01");
     file.write_all(&output)?;
+
+    println!(
+        "Work is down, see the file's location {}",
+        desktop_path.as_str()
+    );
 
     Ok(())
 }
