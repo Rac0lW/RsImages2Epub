@@ -1,4 +1,3 @@
-use core::panic;
 
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
 use std::env;
@@ -64,13 +63,15 @@ fn main() -> io::Result<()> {
     // Path to the folder containing images
     let args: Vec<String> = env::args().collect();
 
-    let input: String;
+    
 
-    if args.len() > 1 {
-        input = args[1].clone();
-    } else {
-        panic!("Need a folder path of your images.");
+    if args.len() != 2 {
+        println!("Usage:");
+        println!("sha1_cracker: <image_folder>");
+        return Ok(());
     }
+
+    let input = args[1].clone();
 
     let input = input.trim();
 
