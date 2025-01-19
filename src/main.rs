@@ -1,6 +1,7 @@
 
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
 use std::env;
+use std::error::Error;
 use std::fs::{self, File};
 use std::io::{self, Write};
 // use std::path::Path;
@@ -59,7 +60,7 @@ fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     Ok(output)
 }
 
-fn main() -> io::Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     // Path to the folder containing images
     let args: Vec<String> = env::args().collect();
 
@@ -68,7 +69,7 @@ fn main() -> io::Result<()> {
     if args.len() != 2 {
         println!("Usage:");
         println!("sha1_cracker: <image_folder>");
-        return Ok(());
+        return Err("Invaild Input".into());
     }
 
     let input = args[1].clone();
