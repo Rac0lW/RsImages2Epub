@@ -1,12 +1,12 @@
 
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
-use std::env;
 use std::error::Error;
 use std::fs::{self, File};
 use std::io::{self, Write};
 // use std::path::Path;
 use ansi_term::Colour;
 use rs_image_2_epub::get_desktop_path;
+
 fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     let mut output = Vec::<u8>::new();
 
@@ -60,19 +60,20 @@ fn run(image_folder: &str) -> epub_builder::Result<Vec<u8>> {
     Ok(output)
 }
 
+use clap::Parser;
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct args{
+    #[arg(short, long)]
+    address: String
+}
+
+
 fn main() -> Result<(), Box<dyn Error>> {
     // Path to the folder containing images
-    let args: Vec<String> = env::args().collect();
+    let args = args::parse();
 
-    
-
-    if args.len() != 2 {
-        println!("Usage:");
-        println!("sha1_cracker: <image_folder>");
-        return Err("Invaild Input".into());
-    }
-
-    let input = args[1].clone();
+    let input = args.address;
 
     let input = input.trim();
 
